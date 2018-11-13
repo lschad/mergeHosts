@@ -2,19 +2,14 @@
 
 const fs = require('fs');
 const request = require('request');
+const hostsFile = require('./hostsFile');
 require('./prototype');
 
 const URL = 'https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts';
-const HOSTS = 'c:\\windows\\system32\\drivers\\etc\\hosts';
 
 const CUSTOM_HOSTS = [
     '0.0.0.0 crashlogs.whatsapp.net'
 ];
-
-function mergeArrays(a, b) {
-    let c = a.concat(b);
-    return c.filter((i, p) => c.indexOf(i) === p);
-}
 
 function getRemoteHosts(url) {
     console.info('get remote hosts');
@@ -44,7 +39,7 @@ function writeHosts(hosts) {
     return new Promise((resolve, reject) => {
         if (hosts.length < 1) return reject('abort. no new entries.');
         let data = hosts.join('\n').strip();
-        fs.writeFile(HOSTS, data, (err) => {
+        fs.writeFile(hostsFile, data, (err) => {
             if (!!err) return reject(err);
             resolve('Merged hosts file ..');
         });
@@ -95,7 +90,7 @@ function sortHosts(hosts) {
 }
 
 function getDiff(hosts) {
-    let local = fs.readFileSync(HOSTS, 'utf8').toString().split(/\n/);
+    let local = fs.readFileSync(hostsFile, 'utf8').toString().split(/\n/);
     return hosts.diff(local);
 }
 
