@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const request = require('request');
+require('./prototype');
 
 const URL = 'https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts';
 const HOSTS = 'c:\\windows\\system32\\drivers\\etc\\hosts';
@@ -9,26 +10,6 @@ const HOSTS = 'c:\\windows\\system32\\drivers\\etc\\hosts';
 const CUSTOM_HOSTS = [
     '0.0.0.0 crashlogs.whatsapp.net'
 ];
-
-Array.prototype.diff = function (a) {
-    return this.filter(function (i) {
-        return a.indexOf(i) < 0;
-    });
-};
-Array.prototype.unique = function () {
-    let a = this.concat();
-    for (let i = 0; i < a.length; ++i) {
-        for (let j = i + 1; j < a.length; ++j) {
-            if (a[i] === a[j])
-                a.splice(j--, 1);
-        }
-    }
-
-    return a;
-};
-String.prototype.strip = function () {
-    return this.replace(/^\s+|\s+$/g, '');
-};
 
 function mergeArrays(a, b) {
     let c = a.concat(b);
@@ -61,7 +42,7 @@ function getCustomHosts(hosts) {
 function writeHosts(hosts) {
     console.info('write hosts');
     return new Promise((resolve, reject) => {
-        if(hosts.length < 1) return reject('abort. no new entries.');
+        if (hosts.length < 1) return reject('abort. no new entries.');
         let data = hosts.join('\n').strip();
         fs.writeFile(HOSTS, data, (err) => {
             if (!!err) return reject(err);
